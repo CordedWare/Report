@@ -331,6 +331,18 @@ public class MailService {
 JPA является стандартом для работы с базой данных, описывающим API для сохранения данных, а Hibernate — это реализация этого стандарта с дополнительными возможностями для работы с ORM
 
 #### 4) Про интерфейсы коллекции, которые знаю в джава 
+Вчера и сегодня повторил базовые типы и коллекции в джава. 
+В Java есть коллекция (Collection) как базовый интерфейс и коллекции интерфейсов List, Set, Queue и Map
+
+Интерфейс -> Реализация:
+
+List -> ArrayList, LinkedList, Vector, Stack
+
+Set -> HashSet, LinkedHashSet, TreeSet
+
+Map -> HashMap, LinkedHashMap, TreeMap, Hashtable, ConcurrentHashMap
+
+Queue -> LinkedList, PriorityQueue, ArrayDeque, Deque
 
 #### 5) Как устроен HashMap и что будет если хеши совпадают
 
