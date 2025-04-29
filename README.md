@@ -15,6 +15,7 @@ public class SalaryHtmlReportNotice {
         try {
             connection = DriverManager.getConnection("jdbc:..., "user", "password");
 
+            // Условно псевдозапрос по памяти
             String sql = "SELECT e.id AS userID, SUM(d.salary) AS salary_sum " +
                     "FROM employee e " +
                     "JOIN department d ON e.department_id = d.id " +
@@ -94,6 +95,13 @@ public class SalaryReportNoticeServiceImpl implements SalaryReportNoticeService 
         this.mailService = mailService;
     }
 
+    /**
+     * Генерирует отчет по зарплатам сотрудников выбранной орагнизации за заданный период и отправляет его по электронной почте.
+     *
+     * @param departmentName название организации, по которому нужно сформировать отчет
+     * @param date дата для периода
+     * @param reportFormat формат отчета:  "html", "json", "xml"
+     */
     public void generateAndSendReport(String departmentName, Date date, String reportFormat) {
         try {
             logger.info("Начинаем генерацию отчета для : {} и даты: {}", departmentName, date);
@@ -119,7 +127,7 @@ public class SalaryReportNoticeServiceImpl implements SalaryReportNoticeService 
             logger.error("Ошибка при формировании отчета: {}", e.getMessage(), e);
         }
     }
-    // Формируем отчет в нужный формат TODO здесь пока явно указываем .formatToHtml. Можно подумать в сторону абстракции передавая например в аргумент тип желаемоего формата и на его основании использовать паттерн-матчинг и отправлять в нужном формате 
+    // Формируем отчет в нужный формат. Подумал в сторону абстракции передавая например в аргумент тип желаемоего формата и на его основании использовать паттерн-матчинг и отправлять в нужном формате 
     private String formatReport(List<EmployeeSalaryDTO> results, String reportFormat) {
         switch (reportFormat.toLowerCase()) {
             case "html":
@@ -255,7 +263,7 @@ TODO
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     
     // TODO вопрос каким вариантом писать запрос
-    @Query("SELECT new com.example.EmployeeSalaryDTO(e.id, SUM(e.salary)) " +
+    @Query("SELECT (e.id, SUM(e.salary)) " +
            "FROM Employee e " +
            "JOIN e.department d " +
            "WHERE d.name = :departmentName AND d.date >= :date " +
@@ -321,8 +329,12 @@ public class MailService {
 
 #### 1) Что такое "Транзакционность"?
    вначале подумал про связанно понятие ACID (атомарность, консистентность, изоляция, надежность)
-   Позже на интервью я вспомнил и прокомментировал, что в спринге есть аннотация @Transactional, которая испольщуется для автоматического управления транзакциями.
-   Дома уже я разобрался основной прицнип. Помечая метод такой аннотацией, мы гарантируем, что метод либо выполнится полностью, либо откатит все изменения, если будет ошибка в операции. Все изменения, сделанные в базе в рамках этой транзакции, будут уже отменены. На последней работе я работаю с паттерном-Saga, библиотека для транзакций.
+   
+   Позже на интервью я вспомнил и прокомментировал, что в спринге есть аннотация @Transactional, которая используется для автоматического управления транзакциями.
+   
+   Дома уже я разобрал основной прицнип. Помечая метод такой аннотацией, мы гарантируем, что метод либо выполнится полностью, либо откатит все изменения, если будет ошибка в операции. 
+   
+   Все изменения, сделанные в базе в рамках этой транзакции, будут уже отменены. На последней работе я работаю с паттерном-Saga, библиотека для транзакций.
 #### 2) Назвать какие джоины я знаю. 
 Я назвал 3, но забыл про четвертный, это FULL JOIN. Возможность получить все строки из таблиц, если не совпадают по полю или условию
 ![image](https://github.com/user-attachments/assets/b7358080-629b-4475-9755-62c74762ca66)
