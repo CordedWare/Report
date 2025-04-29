@@ -274,11 +274,13 @@ public class MailService {
     private static final Logger logger = LoggerFactory.getLogger(SalaryReportNotice.class);
 
     public void sendEmail(String to, String subject, String body, String path) {
+
         Properties props = new Properties();
+
         props.put("mail.smtp.host", "...");       
         props.put("mail.smtp.port", "...");       
         props.put("mail.smtp.auth", "true");     
-        props.put("mail.smtp.starttls.enable", "true"); // TLS включен
+        props.put("mail.smtp.starttls.enable", "true");
 
         Session session = Session....});
 
